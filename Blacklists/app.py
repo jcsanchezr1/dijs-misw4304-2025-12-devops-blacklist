@@ -1,4 +1,14 @@
 import os
+import sys
+
+# Depuración: Imprimir el directorio actual y las rutas de búsqueda de Python
+print(f"Current working directory: {os.getcwd()}")
+print(f"Python paths: {sys.path}")
+
+# Asegurarte de que el directorio actual esté en sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
 
 from flask import Flask
 from flask_restful import Api
@@ -22,4 +32,4 @@ api.add_resource(HealthCheckView, '/blacklists/ping')
 api.add_resource(ResetDatabaseView, '/blacklists/reset')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

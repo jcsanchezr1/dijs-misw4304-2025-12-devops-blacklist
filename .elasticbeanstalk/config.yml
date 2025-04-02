@@ -1,0 +1,10 @@
+branch-defaults:
+  main:
+    environment: blacklist-env
+    group_suffix: null
+global:
+  application_name: blacklist-app
+  default_platform: Python 3.8
+  default_region: us-east-2
+  profile: eb-cli
+  workspace_type: Application

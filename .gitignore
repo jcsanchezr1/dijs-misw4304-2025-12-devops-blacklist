@@ -160,14 +160,11 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-Ofertas/.idea/
-Usuarios/.idea/
-Rf005/.idea/
-Credit-Cards/.idea/
-Credit-Card-Verifier/.idea/
-Notificaciones/.idea/
+Blacklists/.idea/
 .vscode
 .idea/*
 #Operating System
 .DS_Store
 pgdata/
+
+.DS_Store
