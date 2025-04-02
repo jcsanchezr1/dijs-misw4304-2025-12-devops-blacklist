@@ -90,7 +90,7 @@ class BlacklistDetailView(HeaderResource):
         try:
             cuenta = Blacklist.query.filter_by(email=email).first()
         except Exception as e:            
-            return {'message': f'An error occurred: {str(e)}'}, 500
+            return {'msg': f'Hubo un problema al consultar la cuenta: {str(e)}'}, 500
         
         if not cuenta:
             return {
@@ -122,4 +122,4 @@ class ResetDatabaseView(Resource):
 
         except Exception as e:
             db.session.rollback()
-            return {'msg': f'An error occurred: {str(e)}'}, 500       
+            return {'msg': f'Hubo un problema al eliminar la base de datos: {str(e)}'}, 500       
