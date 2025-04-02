@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  blacklist_db:
+    image: postgres
+    container_name: blacklist_db
+    environment:
+      - POSTGRES_DB=user
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - blacklist_net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+  
+  blacklist:
+    image: blacklist
+    container_name: blacklist
+    build:
+      context: ./blacklists
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: blacklist_db
+      DB_PORT: 5432
+      DB_NAME: user
+      AUTH_TOKEN: qwertyuiopasdfghjklzxcvbnm123456
+    networks:
+      - blacklist_net
+      - app_net
+    ports:
+      - "3000:3000"
+    depends_on:
+      blacklist_db:
+        condition: service_healthy
+      
+networks:
+  app_net:
+    name: app_net
+    driver: bridge
+  blacklist_net:
+    name: blacklist_net
+    driver: bridge  
