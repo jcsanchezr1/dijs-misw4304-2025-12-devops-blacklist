@@ -90,8 +90,6 @@ Esto iniciará los siguientes servicios:
 - Nota Importante
   Los errores de autorización (401, 403) y los errores relacionados con los campos (400, 412) no incluyen un mensaje detallado en el cuerpo de la respuesta, solo el código de error.
 
-  Los errores de autorización (401, 403) y los errores relacionados con los campos (400, 412) no incluyen un mensaje detallado en el cuerpo de la respuesta, solo el código de error.
-
 ### 2. Consultar detalles de una blacklist
 **URL:** `/blacklists/<email>`  
 **Método:** `GET`  
