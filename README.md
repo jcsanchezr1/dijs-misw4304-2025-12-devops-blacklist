@@ -16,7 +16,7 @@ Esta sección describe los servicios desarrollados en Python 3.10 utilizando Fla
 
 ### Configuración del entorno (Opción 1)
 
-En la raíz del proyecto de Balcklists `./Blacklists`, debe existir un archivo ```.env``` con la siguiente configuración:
+En la raíz del proyecto de Blacklists `./Blacklists`, debe existir un archivo ```.env``` con la siguiente configuración:
 ```
 DB_USER: Usuario de la base de datos
 DB_PASSWORD: Contraseña de la base de datos
@@ -50,21 +50,21 @@ flask run --host=0.0.0.0 --port=3000
 
 ### Uso de Docker Compose (Opción 2)
 
-#### Levantar solo el servicio de Balcklists
+#### Levantar solo el servicio de Blacklists
 
-1. Levantar solo el servicio de Balcklists desde un directorio atrás, mismo nivel de Balcklists, se puede ejecutar el siguiente comando para levantar solo los servicios relacionados con Balcklists:
-   Para levantar únicamente el servicio relacionado con las Balcklists, incluyendo la base de datos de Balcklists y el propio servicio de Balcklists, puedes ejecutar el siguiente comando:
+1. Levantar solo el servicio de Blacklists desde un directorio atrás, mismo nivel de Blacklists, se puede ejecutar el siguiente comando para levantar solo los servicios relacionados con Blacklists:
+   Para levantar únicamente el servicio relacionado con las Blacklists, incluyendo la base de datos de Blacklists y el propio servicio de Blacklists, puedes ejecutar el siguiente comando:
 
 ```
 docker-compose up -d blacklist_db blacklist blacklist_net
 ```
 
 Esto iniciará los siguientes servicios:
-- blacklist_db: Base de datos PostgreSQL para el servicio de Balcklists.
-- blacklist: Servicio de Balcklists que se conectará a blacklist_db.
+- blacklist_db: Base de datos PostgreSQL para el servicio de Blacklists.
+- blacklist: Servicio de Blacklists que se conectará a blacklist_db.
 - blacklist_net: Red de Docker utilizada por estos servicios.
 
-## Descripción de los Endpoints
+## Descripción de los endpoints
 
 ### 1. Crear una cuenta en la blacklist
 
@@ -109,7 +109,7 @@ Datos de salida (JSON):
 ### 3. Verificar el estado del servicio
 **URL:** `/blacklists/ping`  
 **Método:** `GET`  
-**Descripción:** Verifica si el servicio de Balcklists está activo.
+**Descripción:** Verifica si el servicio de Blacklists está activo.
 
 Respuesta exitosa (200):
 ```
@@ -119,7 +119,7 @@ Respuesta exitosa (200):
 ### 4. Limpiar la base de datos
 **URL:** `/blacklists/reset`  
 **Método:** `POST`  
-**Descripción:** Limpia todas las Balcklists en la base de datos.
+**Descripción:** Limpia todas las Blacklists en la base de datos.
 
 Respuesta exitosa (200):
 ```json
