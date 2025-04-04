@@ -56,7 +56,7 @@ flask run --host=0.0.0.0 --port=3000
    Para levantar únicamente el servicio relacionado con las Blacklists, incluyendo la base de datos de Blacklists y el propio servicio de Blacklists, puedes ejecutar el siguiente comando:
 
 ```
-docker-compose up -d blacklist_db blacklist blacklist_net
+docker-compose up -d blacklist_db blacklist
 ```
 
 Esto iniciará los siguientes servicios:
