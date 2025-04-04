@@ -1,7 +1,5 @@
 import uuid
-import pytz
-import traceback
-import requests
+import re
 from config import Config
 
 from flask import request, abort, make_response, Response
@@ -49,7 +47,14 @@ class BlacklistView(HeaderResource):
         for field in required_fields:
             if field not in data:
                 response = make_response('', 400)
-                abort(response)        
+                abort(response)
+        
+        email = data["email"]
+        if not self.validate_email(email):
+            abort(Response(status=400))
+            
+        if self.account_exists(email):
+            abort(Response(status=412))       
 
         try:
 
@@ -70,7 +75,20 @@ class BlacklistView(HeaderResource):
                    }, 201
 
         except Exception as e:
-            return {'message': f'Hubo un problema al crear la cuenta: {str(e)}'}, 500  
+            return {'message': f'Hubo un problema al crear la cuenta: {str(e)}'}, 500
+    
+    def validate_email(self, email):
+        """
+        Valida el formato del email utilizando una expresión regular.
+        """
+        regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        return re.match(regex, email) is not None
+
+    def account_exists(self, email):
+        """
+        Verifica si ya existe una cuenta con el mismo email.
+        """
+        return db.session.query(Blacklist).filter((Blacklist.email == email)).first() is not None
 
 class BlacklistDetailView(HeaderResource):
 
@@ -86,6 +104,9 @@ class BlacklistDetailView(HeaderResource):
         except ValueError:
             response = make_response('', 400)
             abort(response)
+            
+        if not BlacklistView.validate_email(self, email):
+            abort(Response(status=400))
 
         try:
             cuenta = Blacklist.query.filter_by(email=email).first()
@@ -96,12 +117,12 @@ class BlacklistDetailView(HeaderResource):
             return {
                        "existe": False,
                        "blocked_reason": ""                       
-                   }, 201
+                   }, 200
         else:
             return {
                        "existe": True,
                        "blocked_reason": cuenta.blocked_reason                       
-                   }, 201
+                   }, 200
             
 class HealthCheckView(Resource):
     def get(self):
