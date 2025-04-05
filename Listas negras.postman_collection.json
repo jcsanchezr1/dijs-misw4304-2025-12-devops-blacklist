@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "0d3612d0-aefe-40c7-b5f2-c874ee6f9e06",
+		"name": "Listas negras",
+		"description": "Esta colección está diseñada para probar y documentar los endpoints de la API destinada a la gestión de listas negras (_blacklists_), permitiendo añadir, consultar, y administrar los datos relacionados. La colección está organizada en tres carpetas principales que agrupan los endpoints por funcionalidad:\n\n- **Añadir una cuenta en la blacklist:** Contiene los casos de prueba, tanto de éxito como de error, para el endpoint que permite registrar una cuenta en la lista negra.\n    \n    - **Endpoint:** **`POST /blacklists`**\n        \n    - **Funcionalidad:** Añade unqa cuenta (email) a la blacklist del sistema.\n        \n- **Consultar detalle de la blacklist:** Incluye los casos de prueba de éxito y error para consultar si un email se encentra registrado en la lista negra.\n    \n    - **Endpoint:** **`GET /blacklists/`**\n        \n    - **Funcionalidad:** Permite obtener información sobre si una cuenta está o no en la blacklist.\n        \n- **Admin:** Contiene enpoints utilitarios para administración y monitoreo del sistema.\n    \n    - **Healthcheck**\n        \n        - **Endpoint:** **`GET /blacklists/ping`**\n            \n        - **Funcionalidad:** Verifica si el servicio está activo y responde correctamente.\n            \n    - **Reset de la base de datos**\n        \n        - **Endpoint:** **`POST /blacklists/reset`**\n            \n        - **Funcionalidad:** Limpia completamente los datos registrados en el sistema",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "43596761",
+		"_collection_link": "https://www.postman.com/sergiocelis-5051674/workspace/blacklists-dijs/collection/43596761-0d3612d0-aefe-40c7-b5f2-c874ee6f9e06?action=share&source=collection_link&creator=43596761"
+	},
+	"item": [
+		{
+			"name": "Añadir una cuenta en la blacklist",
+			"item": [
+				{
+					"name": "Añadir cuenta ÉXITO",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const email = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();\r",
+									"pm.collectionVariables.set('USER_EMAIL', email);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"El estado deberia ser  201\", function () {\r",
+									"  pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response tiene id\", function () {\r",
+									"  pm.expect(jsonData.id).to.not.be.undefined;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response tiene msg\", function () {\r",
+									"  pm.expect(jsonData.msg).to.not.be.undefined;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{USER_EMAIL}}\",\r\n    \"app_uuid\":\"89564fcf-41d9-4b97-b4cd-1791679ea04a\",\r\n    \"blocked_reason\":\"Constante spam\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists",
+						"description": "Envía una solicitud válida para registrar una cuenta en la lista negra. El sistema responde con éxito confirmando el registro."
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir cuenta ERROR - Campos incompletos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser 400\", function () {\r",
+									"  pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{USER_EMAIL}}\",\r\n    \"blocked_reason\":\"Constante spam\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists",
+						"description": "Se omite uno o más campos obligatorios en la solicitud, lo que genera una respuesta de error por validación."
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir cuenta ERROR - Email inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser 400\", function () {\r",
+									"  pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"sergio.celis@\",\r\n    \"app_uuid\":\"uuid de la apicación\",\r\n    \"blocked_reason\":\"Razón por la que fue agregado a la blacklist\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists",
+						"description": "El email proporcionado no cumple con el formato correcto. La solicitud es rechazada a causa de entrada inválida."
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir cuenta ERROR - Email existente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser 412\", function () {\r",
+									"    pm.response.to.have.status(412);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{USER_EMAIL}}\",\r\n    \"app_uuid\":\"uuid de la apicación\",\r\n    \"blocked_reason\":\"Razón por la que fue agregado a la blacklist\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists",
+						"description": "Se intenta registrar un email que ya está en la lista negra. La solicitud es rechazada para evitar duplicados."
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir cuenta ERROR - Sin autorización",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser 403\", function () {\r",
+									"    pm.response.to.have.status(403);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"{{USER_EMAIL}}\",\r\n    \"app_uuid\":\"uuid de la apicación\",\r\n    \"blocked_reason\":\"Razón por la que fue agregado a la blacklist\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists",
+						"description": "La solicitud se realiza sin incluir el token de autorización requerido. El acceso es denegado por falta de credenciales."
+					},
+					"response": []
+				}
+			],
+			"description": "Permite crear o añadir una nueva cuenta en la blacklist. Utiliza el endpoint `/blacklists` con un método POST. En el cuerpo de la solicitud se deben enviar los siguientes parámetros:\n\n- `email:` Correo electrónico a añadir.\n    \n\n> ⚠️ Se está utilizando la variable dinámica `USER_EMAIL` para generar correos aleatorios. Por esta razón, el campo email puede aparecer vacío en la vista _Overview_ de cada endpoint, pero se completa automáticamente al momento de ejecutar el request. \n  \n\n- `app_uuid:` UUID de la aplicación.\n    \n- `blocked_reason:` Razón por la que el email fue agregado a la blacklist.\n    \n\n**Códigos de Estado**:\n\n- **201 CREATED**: La solicitud fue exitosa. Retorna un mensaje de confirmación al usuario indicando que el email fue agregado con éxito a la blacklist.\n    \n- **403 FORBIDEN**: Errores de autorización. Retorna únicamente el código del error.\n    \n- **400 y 412** : La solicitud no fue existosa. Errores relacionados con validaciones a los campos. Retorna únicamente el código del error."
+		},
+		{
+			"name": "Consultar detalle de la blacklist",
+			"item": [
+				{
+					"name": "Obtener detalle ÉXITO - Cuenta existente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser  200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"let jsonData = JSON.parse(responseBody);\r",
+									"\r",
+									"\r",
+									"tests[\"Response tiene existe\"] = jsonData.existe !== undefined;\r",
+									"tests[\"existe deber ser true\"] = jsonData.existe == true;\r",
+									"\r",
+									"tests[\"Response tiene blocked_reason\"] = jsonData.blocked_reason !== undefined;\r",
+									"tests[\"blocked_reason no debe ser vacio \"] = jsonData.blocked_reason !== \"\";"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists/{{USER_EMAIL}}",
+						"description": "Se consulta un email que ya ha sido añadido a la blacklist. La respuesta contiene el detalle del registro asociado."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener detalle ÉXITO - Cuenta no existente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser  200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let jsonData = JSON.parse(responseBody);\r",
+									"tests[\"Response tiene existe\"] = jsonData.existe !== undefined;\r",
+									"tests[\"existe deber ser false\"] = jsonData.existe == false;\r",
+									"\r",
+									"tests[\"Response tiene blocked_reason\"] = jsonData.blocked_reason !== undefined;\r",
+									"tests[\"blocked_reason debe ser vacio \"] = jsonData.blocked_reason == \"\";"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists/julio.sanchez@gmail.com",
+						"description": "Se consulta un email que no se encuentra en la blacklist. La respuesta es exitosa e indica que la cuenta no existe."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener detalle ERROR - Sin email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser  404\", function () {\r",
+									"  pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists/",
+						"description": "La solicitud se realiza sin incluir el email como parámetro en la URL. El sistema responde con error por ruta inválida o no encontrada."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener detalle ERROR - Email inválido",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"El estado deberia ser  400\", function () {\r",
+									"  pm.response.to.have.status(400);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{vault:authorization-secret}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists/sergio.celis@",
+						"description": "Se realiza la solicitud con un email que no cumple con el formato correcto. El sistema rechaza la petición por entrada no válida."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener detalle ERROR - Sin autorización",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"El estado deberia ser 403\"] = responseCode.code == 403;"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{URL}}/blacklists/sergio.celis@gmail.com",
+						"description": "La solicitud se envía sin el token de autorización requerido. El sistema deniega el acceso por falta de credenciales."
+					},
+					"response": []
+				}
+			],
+			"description": "Permite consultar si una cuenta existe en la blacklist. Utiliza el endpoint `/blacklists/` con un método GET. La respuesta de la solicitud envía los siguientes parámetros:\n\n- `existe:` Un valor booleano que indica si la cuenta existe (true) o no (false) en la blacklist.\n    \n- `blocked_reason:` Razón por la que el email fue agregado a la blacklist.\n    \n\n**Códigos de Estado**:\n\n- **200 OK**: La solicitud fue exitosa. Retorna los datos de salida anteriormente mencionados.\n    \n- **403 FORBIDEN**: Errores de autorización. Retorna únicamente el código del error.\n    \n- **400 y 404**: La solicitud no fue existosa. Errores relacionados con los parámetros. Retorna únicamente el código del error."
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Verificar healtcheck",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"El estado deberia ser 200\"] = responseCode.code == 200;"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{URL}}/blacklists/ping",
+						"description": "Verifica que el servicio esté en funcionamiento. Responde con código 200 si todo está operativo."
+					},
+					"response": []
+				},
+				{
+					"name": "Limpiar la base de datos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"El estado deberia ser 200\"] = responseCode.code == 200;"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": "{{URL}}/blacklists/reset",
+						"description": "Limpia por completo los registros de la blacklist. Retorna código 200 al completarse correctamente."
+					},
+					"response": []
+				}
+			],
+			"description": "Este folder agrupa los endpoints administrativos del sistema. Están pensados para tareas de monitoreo y mantenimiento:\n\n- **Verificar healthcheck**: Permite verificar que el servicio esté activo y funcionando correctamente. Retorna una respuesta rápida con código **200 OK** si el sistema está operativo.\n    \n- **Limpiar la base de datos**: Elimina todos los registros actuales de la blacklist. Está destinado a pruebas o reinicios de ambiente. También retorna un código **200 OK** al completarse exitosamente."
+		}
+	],
+	"variable": [
+		{
+			"key": "USER_EMAIL",
+			"value": ""
+		}
+	]
+}
