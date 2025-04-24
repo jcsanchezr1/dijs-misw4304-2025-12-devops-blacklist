@@ -17,8 +17,9 @@ class TestBlacklistViews(unittest.TestCase):
         with app.test_request_context():
             view = HealthCheckView()
             response, code = view.get()
-            # self.assertEqual(code, 200)
-            self.assertEqual(code, 500)
+            self.assertEqual(code, 200)
+            # esto es para inducir una error
+            # self.assertEqual(code, 500)
             self.assertEqual(response, 'pong')
 
     @patch('views.Config.AUTH_TOKEN', 'valid-token')
