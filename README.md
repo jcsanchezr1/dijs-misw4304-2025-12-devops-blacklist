@@ -127,5 +127,4 @@ Respuesta exitosa (200):
   "msg": "Todos los datos fueron eliminados"
 }
 ```
-test
 
