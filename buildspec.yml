@@ -1,8 +1,14 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo Installing Python dependencies...
+      - pip install -r Blacklists/requirements.txt
   pre_build:
     commands:
+      - echo Running Python unit tests...
+      - python -m unittest discover -s Blacklists -v
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 397119409634.dkr.ecr.us-east-2.amazonaws.com
   build:
