@@ -11,7 +11,7 @@
       ],
       "image": "<IMAGE1_NAME>",
       "essential": true,
-      "name": "Container-app-blacklistXXX",
+      "name": "Container-app-blacklist",
       "environment": [
         {
           "name": "AUTH_TOKEN",
