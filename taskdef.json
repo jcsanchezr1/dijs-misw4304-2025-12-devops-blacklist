@@ -11,46 +11,46 @@
       ],
       "image": "<IMAGE1_NAME>",
       "essential": true,
-      "name": "Container-app-blacklist"
+      "name": "Container-app-blacklist",
+      "environment": [
+        {
+          "name": "AUTH_TOKEN",
+          "value": "qwertyuiopasdfghjklzxcvbnm123456"
+        },
+        {
+          "name": "RDS_HOSTNAME",
+          "value": "database-blacklist.c58kyug6sumo.us-east-2.rds.amazonaws.com"
+        },
+        {
+          "name": "RDS_PASSWORD",
+          "value": "postgres"
+        },
+        {
+          "name": "RDS_PORT",
+          "value": "5432"
+        },
+        {
+          "name": "RDS_USERNAME",
+          "value": "postgres"
+        },
+        {
+          "name": "RDS_DB_NAME",
+          "value": "postgres"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/Task-app-blacklist",
+          "mode": "non-blocking",
+          "awslogs-create-group": "true",
+          "max-buffer-size": "25m",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
     }
   ],
-  "environment": [
-    {
-      "name": "AUTH_TOKEN",
-      "value": "qwertyuiopasdfghjklzxcvbnm123456"
-    },
-    {
-      "name": "RDS_HOSTNAME",
-      "value": "database-blacklist.c58kyug6sumo.us-east-2.rds.amazonaws.com"
-    },
-    {
-      "name": "RDS_PASSWORD",
-      "value": "postgres"
-    },
-    {
-      "name": "RDS_PORT",
-      "value": "5432"
-    },
-    {
-      "name": "RDS_USERNAME",
-      "value": "postgres"
-    },
-    {
-      "name": "RDS_DB_NAME",
-      "value": "postgres"
-    }
-  ],
-  "logConfiguration": {
-    "logDriver": "awslogs",
-    "options": {
-      "awslogs-group": "/ecs/Task-app-blacklist",
-      "mode": "non-blocking",
-      "awslogs-create-group": "true",
-      "max-buffer-size": "25m",
-      "awslogs-region": "us-east-2",
-      "awslogs-stream-prefix": "ecs"
-    }
-  },
   "requiresCompatibilities": [
     "FARGATE"
   ],
