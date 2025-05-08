@@ -9,6 +9,10 @@
           "LoadBalancerInfo": {
             "ContainerName": "Container-app-blacklist",
             "ContainerPort": 3000
+          },
+          "DeploymentConfiguration": {
+            "DeploymentType": "ECS",
+            "DeploymentOption": "CodeDeployDefault.ECSAllAtOnce"
           }
         }
       }
